@@ -1,0 +1,60 @@
+---
+title: "Billboard Graphic"
+
+excute:
+echo: false
+message: false
+warning: false
+---
+
+```{r}
+library(tidyverse)
+library(tidyr)
+```
+
+
+```{r}
+data("billboard", package = "tidyr")
+
+# Reshape the data: pivot week columns into long format
+billboard_long <- billboard %>%
+  pivot_longer(cols = starts_with("wk"),
+               names_to = "week",
+               names_prefix = "wk",
+               values_to = "rank",
+               values_drop_na = TRUE) %>%
+  mutate(week = as.integer(week))
+
+# Pick a few top songs for clarity (e.g., top 5 debut ranks)
+top_songs <- billboard_long %>%
+  group_by(track) %>%
+  summarize(first_rank = min(rank), .groups = "drop") %>%
+  slice_min(first_rank, n = 5) %>%
+  pull(track)
+
+# Filter data to include only those songs
+filtered_billboard <- billboard_long %>%
+  filter(track %in% top_songs)
+
+# Plot
+ggplot(filtered_billboard, aes(x = week, y = rank, color = track)) +
+  geom_line(size = 1.2) +
+  scale_y_reverse() +  # Rank 1 is best
+  labs(
+    title = "Billboard Chart Trajectories",
+    subtitle = "Top 5 debuting songs from the 2000 Billboard dataset",
+    x = "Week on Chart",
+    y = "Chart Rank",
+    color = "Song",
+    caption = "Source: tidyr::billboard"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", size = 18),
+    legend.position = "bottom"
+  )
+
+```
+This is a Quarto website.
+
+To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
