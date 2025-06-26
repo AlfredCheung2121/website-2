@@ -2,4 +2,8 @@
 title: "About"
 ---
 
-About this site
+My name is **Alfred Cheung** and I graduated from *HKUST*.
+
+
+
+[Kane's Free Data Science Bootcamp](https://bootcamp.davidkane.info)
